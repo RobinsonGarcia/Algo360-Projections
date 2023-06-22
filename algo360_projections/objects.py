@@ -80,7 +80,7 @@ class EquirectProjection(Base):
     def cube(self):
         self.points,self.angles = cubemap(n=None,delta_lamb=0,delta_phi=0,scanner_shadow_angle=self.scanner_shadow_angle)
         faces = self.generate()
-        cube_kwargs={'mode':'cube','eq_H':self._H,'eq_W':self._W}
+        cube_kwargs={'mode':'cube','eq_H':self._H,'eq_W':self._W,'angles':self.angles,'points':self.points}
         return Faces(np.stack(faces),**cube_kwargs)
 
 
@@ -95,7 +95,7 @@ class EquirectProjection(Base):
         else:
             ixs = np.arange(N)
         faces = self.generate()
-        ico_kwargs={'mode':'ico','n':n,'ixs':ixs,'eq_H':self._H,'eq_W':self._W}
+        ico_kwargs={'mode':'ico','n':n,'ixs':ixs,'eq_H':self._H,'eq_W':self._W,'angles':self.angles,'points':self.points}
         return Faces(np.stack(faces),**ico_kwargs)
 
 
@@ -123,6 +123,9 @@ class Faces(Base):
         
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+    def __len__(self):
+        return self._i.shape[0]
         
     def generate(self):
         
